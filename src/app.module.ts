@@ -3,16 +3,24 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ExternalApiService } from './external-api.service';
+import {
+  CoachSchema,
+  CompetitionSchema,
+  PlayerSchema,
+  TeamSchema,
+} from './schemas';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      `mongodb://mongo:${process.env.MONGO_PORT || '27017'}/${
-        process.env.MONGO_DB_NAME || 'santex-db'
-      }`,
-    ),
+    MongooseModule.forRoot(process.env.MONGO_URI),
+    MongooseModule.forFeature([
+      { name: 'Competition', schema: CompetitionSchema },
+      { name: 'Team', schema: TeamSchema },
+      { name: 'Player', schema: PlayerSchema },
+      { name: 'Coach', schema: CoachSchema },
+    ]),
   ],
   controllers: [AppController],
   providers: [AppService, ExternalApiService],
 })
-export class AppModule {}
+export class AppModule { }
