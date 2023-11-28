@@ -5,6 +5,7 @@ export const PlayerSchema = new mongoose.Schema({
   position: String,
   dateOfBirth: String,
   nationality: String,
+  team: String,
 });
 
 export interface PlayerDto {
@@ -12,6 +13,7 @@ export interface PlayerDto {
   position: string;
   dateOfBirth: string;
   nationality: string;
+  team: string;
 }
 
 export const PlayerModel = mongoose.model<PlayerDto & mongoose.Document>(
