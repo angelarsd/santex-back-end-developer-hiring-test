@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
+import {
+  LeagueExtApiResInterface,
+  TeamsAndPlayerExtApiResInterface,
+} from './interfaces';
+import { LeagueCodeType } from './types';
 
 @Injectable()
 export class ExternalApiService {
@@ -14,31 +19,17 @@ export class ExternalApiService {
     });
   }
 
-  /* TODO:
-    WC | FIFA World Cup
-    CL | UEFA Champions League
-    BL1 | Bundesliga
-    DED | Eredivisie
-    BSA | Campeonato Brasileiro Série A
-    PD | Primera Division
-    FL1 | Ligue 1
-    ELC | Championship
-    PPL | Primeira Liga
-    EC | European Championship
-    SA | Serie A
-    PL | Premier League
-    CLI | Copa Libertadores
-  */
-
-  async fetchCompetitionDetails(competitionId: string): Promise<any> {
-    const response = await this.service.get(`competitions/${competitionId}`);
+  async fetchCompetitionDetails(
+    leagueCode: LeagueCodeType,
+  ): Promise<LeagueExtApiResInterface> {
+    const response = await this.service.get(`competitions/${leagueCode}`);
     return response.data;
   }
 
-  async fetchTeamsAndPlayers(competitionId: string): Promise<any> {
-    const response = await this.service.get(
-      `competitions/${competitionId}/teams`,
-    );
+  async fetchTeamsAndPlayers(
+    leagueCode: LeagueCodeType,
+  ): Promise<TeamsAndPlayerExtApiResInterface> {
+    const response = await this.service.get(`competitions/${leagueCode}/teams`);
     return response.data;
   }
 }
