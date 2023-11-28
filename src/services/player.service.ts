@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { LeagueCodeType } from '../types';
 import { PlayerDocumentInterface } from '../schemas';
+import { ApiResponseInterface, PlayersResponseInterface } from 'src/interfaces';
 
 @Injectable()
 export class PlayerService {
@@ -14,8 +15,8 @@ export class PlayerService {
   async getPlayersByCompetition(
     leagueCode: LeagueCodeType,
     { name }: { name?: string },
-  ): Promise<any> {
-    const playersInCompetition = await this.playerModel.aggregate([
+  ): Promise<PlayersResponseInterface[] | ApiResponseInterface> {
+    const playersInCompetition = (await this.playerModel.aggregate([
       {
         $lookup: {
           from: 'teams',
@@ -46,6 +47,7 @@ export class PlayerService {
       },
       {
         $project: {
+          _id: 0,
           id: 1,
           name: 1,
           position: 1,
@@ -54,7 +56,7 @@ export class PlayerService {
           team: '$teamDetails.name',
         },
       },
-    ]);
+    ])) as unknown as PlayersResponseInterface[];
 
     if (!playersInCompetition.length) {
       throw new HttpException(

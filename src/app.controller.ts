@@ -3,7 +3,11 @@ import { ImportLeagueService } from './services/import-league.service';
 import { PlayerService } from './services/player.service';
 import { ValidateLeagueCodePipe } from './decorators';
 import { LeagueCodeType } from './types';
-import { ApiResponseInterface, TeamResponseInterface } from './interfaces';
+import {
+  ApiResponseInterface,
+  PlayersResponseInterface,
+  TeamResponseInterface,
+} from './interfaces';
 import { TeamService } from './services/team.service';
 
 @Controller()
@@ -25,7 +29,7 @@ export class AppController {
   async fetchPlayers(
     @Param('leagueCode', ValidateLeagueCodePipe) leagueCode: LeagueCodeType,
     @Query() queries: { name?: string },
-  ): Promise<any> {
+  ): Promise<PlayersResponseInterface[] | ApiResponseInterface> {
     return this.playerService.getPlayersByCompetition(leagueCode, queries);
   }
 
@@ -36,7 +40,7 @@ export class AppController {
     queries: {
       includePlayers?: string;
     },
-  ): Promise<ApiResponseInterface | TeamResponseInterface> {
+  ): Promise<TeamResponseInterface | ApiResponseInterface> {
     const includePlayers = queries.includePlayers === 'true';
     return this.teamService.findTeamByName(teamName, includePlayers);
   }
