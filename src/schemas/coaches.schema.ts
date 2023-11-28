@@ -2,19 +2,19 @@ import * as mongoose from 'mongoose';
 
 export const CoachSchema = new mongoose.Schema({
   id: { type: Number, required: true },
-  name: { type: String, required: true },
-  dateOfBirth: { type: String, required: true },
-  nationality: { type: String, required: true },
+  name: { type: String, required: false },
+  dateOfBirth: { type: String, required: false },
+  nationality: { type: String, required: false },
   team: { type: Number, required: true },
 });
 
 CoachSchema.index({ id: 1 }, { unique: true });
 
 export interface CoachDocumentInterface {
-  id: number;
-  name: string;
-  dateOfBirth: string;
-  nationality: string;
+  id: number | null;
+  name: string | null;
+  dateOfBirth: string | null;
+  nationality: string | null;
   team: number;
 }
 

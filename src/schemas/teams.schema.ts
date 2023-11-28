@@ -4,7 +4,7 @@ import { LeagueCodeType } from 'src/types';
 export const TeamSchema = new mongoose.Schema({
   id: { type: Number, required: true },
   name: { type: String, required: true },
-  tla: { type: String, required: true },
+  tla: { type: String, required: false },
   shortName: { type: String, required: true },
   areaName: { type: String, required: true },
   address: { type: String, required: true },

@@ -3,9 +3,9 @@ import * as mongoose from 'mongoose';
 export const PlayerSchema = new mongoose.Schema({
   id: { type: Number, required: true },
   name: { type: String, required: true },
-  position: { type: String, required: true },
-  dateOfBirth: { type: String, required: true },
-  nationality: { type: String, required: true },
+  position: { type: String, required: false },
+  dateOfBirth: { type: String, required: false },
+  nationality: { type: String, required: false },
   team: { type: Number, required: true },
 });
 
