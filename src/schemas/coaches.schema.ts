@@ -1,20 +1,23 @@
 import * as mongoose from 'mongoose';
 
 export const CoachSchema = new mongoose.Schema({
-  name: String,
-  dateOfBirth: String,
-  nationality: String,
-  team: String,
+  id: { type: Number, required: true },
+  name: { type: String, required: true },
+  dateOfBirth: { type: String, required: true },
+  nationality: { type: String, required: true },
+  team: { type: Number, required: true },
 });
 
-export interface CoachDto {
+CoachSchema.index({ id: 1 }, { unique: true });
+
+export interface CoachDocumentInterface {
+  id: number;
   name: string;
   dateOfBirth: string;
   nationality: string;
-  team: string;
+  team: number;
 }
 
-export const CoachModel = mongoose.model<CoachDto & mongoose.Document>(
-  'Coach',
-  CoachSchema,
-);
+export const CoachModel = mongoose.model<
+  CoachDocumentInterface & mongoose.Document
+>('Coach', CoachSchema);

@@ -1,22 +1,25 @@
 import * as mongoose from 'mongoose';
 
 export const PlayerSchema = new mongoose.Schema({
-  name: String,
-  position: String,
-  dateOfBirth: String,
-  nationality: String,
-  team: String,
+  id: { type: Number, required: true },
+  name: { type: String, required: true },
+  position: { type: String, required: true },
+  dateOfBirth: { type: String, required: true },
+  nationality: { type: String, required: true },
+  team: { type: Number, required: true },
 });
 
-export interface PlayerDto {
+PlayerSchema.index({ id: 1 }, { unique: true });
+
+export interface PlayerDocumentInterface {
+  id: number;
   name: string;
   position: string;
   dateOfBirth: string;
   nationality: string;
-  team: string;
+  team: number;
 }
 
-export const PlayerModel = mongoose.model<PlayerDto & mongoose.Document>(
-  'Player',
-  PlayerSchema,
-);
+export const PlayerModel = mongoose.model<
+  PlayerDocumentInterface & mongoose.Document
+>('Player', PlayerSchema);

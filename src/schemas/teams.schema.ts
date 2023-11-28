@@ -2,15 +2,19 @@ import * as mongoose from 'mongoose';
 import { LeagueCodeType } from 'src/types';
 
 export const TeamSchema = new mongoose.Schema({
-  name: String,
-  tla: String,
-  shortName: String,
-  areaName: String,
-  address: String,
-  competitions: Array<LeagueCodeType>,
+  id: { type: Number, required: true },
+  name: { type: String, required: true },
+  tla: { type: String, required: true },
+  shortName: { type: String, required: true },
+  areaName: { type: String, required: true },
+  address: { type: String, required: true },
+  competitions: { type: Array<LeagueCodeType>, required: true },
 });
 
-export interface TeamDto {
+TeamSchema.index({ id: 1 }, { unique: true });
+
+export interface TeamDocumentInterface {
+  id: number;
   name: string;
   tla: string;
   shortName: string;
@@ -19,7 +23,6 @@ export interface TeamDto {
   competitions: LeagueCodeType[];
 }
 
-export const TeamModel = mongoose.model<TeamDto & mongoose.Document>(
-  'Team',
-  TeamSchema,
-);
+export const TeamModel = mongoose.model<
+  TeamDocumentInterface & mongoose.Document
+>('Team', TeamSchema);
