@@ -3,8 +3,8 @@ import axios, { AxiosInstance } from 'axios';
 import {
   LeagueExtApiResInterface,
   TeamsAndPlayerExtApiResInterface,
-} from './interfaces';
-import { LeagueCodeType } from './types';
+} from '../interfaces';
+import { LeagueCodeType } from '../types';
 
 @Injectable()
 export class ExternalApiService {

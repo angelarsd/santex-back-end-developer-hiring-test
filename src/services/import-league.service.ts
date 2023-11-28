@@ -2,28 +2,33 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ExternalApiService } from './external-api.service';
-import { CoachDto, CompetitionDto, PlayerDto, TeamDto } from './schemas';
-import { LeagueCodeType } from './types';
+import {
+  CoachDocumentInterface,
+  CompetitionDocumentInterface,
+  PlayerDocumentInterface,
+  TeamDocumentInterface,
+} from '../schemas';
+import { LeagueCodeType } from '../types';
 import {
   ApiResponseInterface,
   LeagueExtApiResInterface,
   SquadExtApiResInterface,
   TeamExtApiResInterface,
   TeamsAndPlayerExtApiResInterface,
-} from './interfaces';
+} from '../interfaces';
 
 @Injectable()
 export class ImportLeagueService {
   constructor(
     private readonly externalApiService: ExternalApiService,
     @InjectModel('Competition')
-    private competitionModel: Model<CompetitionDto>,
+    private competitionModel: Model<CompetitionDocumentInterface>,
     @InjectModel('Team')
-    private teamModel: Model<TeamDto>,
+    private teamModel: Model<TeamDocumentInterface>,
     @InjectModel('Player')
-    private playerModel: Model<PlayerDto>,
+    private playerModel: Model<PlayerDocumentInterface>,
     @InjectModel('Coach')
-    private coachModel: Model<CoachDto>,
+    private coachModel: Model<CoachDocumentInterface>,
   ) { }
 
   async fetchAndSaveData(
@@ -39,8 +44,11 @@ export class ImportLeagueService {
 
       await Promise.all([
         this.createCompetition(competition),
-        this.createTeams(leagueCode, teamsAndPlayers),
-        this.createPlayersOrCoach(teamsAndPlayers),
+        ...teamsAndPlayers.teams.map(async (team: TeamExtApiResInterface) => {
+          await this.createTeams(leagueCode, team);
+          await this.createPlayer(team);
+          await this.createCoach(team);
+        }),
       ]);
 
       return {
@@ -78,43 +86,30 @@ export class ImportLeagueService {
 
   private async createTeams(
     leagueCode: LeagueCodeType,
-    teamsAndPlayers: TeamsAndPlayerExtApiResInterface,
+    team: TeamExtApiResInterface,
   ): Promise<void> {
-    await Promise.all(
-      teamsAndPlayers.teams.map(async (team: TeamExtApiResInterface) => {
-        const existingTeam = await this.existingTeam(team);
+    const existingTeam = await this.teamModel
+      .findOne({
+        id: team.id,
+      })
+      .exec();
 
-        if (existingTeam) {
-          await this.teamModel.findOneAndUpdate(
-            { tla: team.tla },
-            { competitions: [...existingTeam.competitions, leagueCode] },
-          );
-        }
-
-        await this.teamModel.create({
-          name: team.name,
-          tla: team.tla,
-          shortName: team.shortName,
-          areaName: team.area.name,
-          address: team.address,
-          competitions: [`${leagueCode}`],
-        });
-      }),
-    );
-  }
-
-  private async createPlayersOrCoach(
-    teamsAndPlayers: TeamsAndPlayerExtApiResInterface,
-  ): Promise<void> {
-    await Promise.all(
-      teamsAndPlayers.teams.map(async (team: TeamExtApiResInterface) => {
-        if (team.squad.length) {
-          this.createPlayer(team);
-        } else {
-          this.createCoach(team);
-        }
-      }),
-    );
+    if (existingTeam) {
+      await this.teamModel.findOneAndUpdate(
+        { id: team.id },
+        { competitions: [...existingTeam.competitions, leagueCode] },
+      );
+    } else {
+      await this.teamModel.create({
+        id: team.id,
+        name: team.name,
+        tla: team.tla,
+        shortName: team.shortName,
+        areaName: team.area.name,
+        address: team.address,
+        competitions: [`${leagueCode}`],
+      });
+    }
   }
 
   private async checkExistingCompetition(leagueCode: LeagueCodeType) {
@@ -134,43 +129,44 @@ export class ImportLeagueService {
     }
   }
 
-  private async existingTeam(
-    team: TeamExtApiResInterface,
-  ): Promise<TeamDto | null> {
-    return await this.teamModel.findOne({
-      tla: team.tla,
-    });
-  }
-
   private async createPlayer(team: TeamExtApiResInterface): Promise<void> {
-    const existingTeam = await this.existingTeam(team);
-    if (!existingTeam) {
-      team.squad.map(
-        async ({
-          id,
-          name,
-          position,
-          dateOfBirth,
-          nationality,
-        }: SquadExtApiResInterface) =>
+    team.squad.map(
+      async ({
+        id,
+        name,
+        position,
+        dateOfBirth,
+        nationality,
+      }: SquadExtApiResInterface) => {
+        const existingPlayer = await this.playerModel.findOne({ id }).exec();
+        if (!existingPlayer) {
           await this.playerModel.create({
             id,
             name,
             position,
             dateOfBirth,
             nationality,
-            team: team.tla,
-          }),
-      );
-    }
+            team: team.id,
+          });
+        }
+      },
+    );
   }
 
   private async createCoach(team: TeamExtApiResInterface): Promise<void> {
-    await this.coachModel.create({
-      name: team.coach.name,
-      dateOfBirth: team.coach.dateOfBirth,
-      nationality: team.coach.nationality,
-      team: team.tla,
-    });
+    const existingCoach = await this.coachModel
+      .findOne({ id: team.coach.id })
+      .exec();
+    if (!existingCoach) {
+      const currentDate = new Date();
+      const idRandom = currentDate.getTime() % Math.pow(10, 10);
+      await this.coachModel.create({
+        id: team.coach.id || idRandom,
+        name: team.coach.name,
+        dateOfBirth: team.coach.dateOfBirth,
+        nationality: team.coach.nationality,
+        team: team.id,
+      });
+    }
   }
 }

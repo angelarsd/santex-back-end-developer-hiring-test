@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { LeagueCodeType } from './types';
-import { PlayerDto } from './schemas';
+import { LeagueCodeType } from '../types';
+import { PlayerDocumentInterface } from '../schemas';
 
 @Injectable()
 export class PlayerService {
   constructor(
     @InjectModel('Player')
-    private playerModel: Model<PlayerDto>,
+    private playerModel: Model<PlayerDocumentInterface>,
   ) { }
 
   async getPlayersByCompetition(
@@ -20,7 +20,7 @@ export class PlayerService {
         $lookup: {
           from: 'teams',
           localField: 'team',
-          foreignField: 'tla',
+          foreignField: 'id',
           as: 'teamDetails',
         },
       },
@@ -46,6 +46,7 @@ export class PlayerService {
       },
       {
         $project: {
+          id: 1,
           name: 1,
           position: 1,
           dateOfBirth: 1,
@@ -54,6 +55,17 @@ export class PlayerService {
         },
       },
     ]);
+
+    if (!playersInCompetition.length) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Not found',
+          message: 'No players were found with the filters applied.',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     return playersInCompetition;
   }
