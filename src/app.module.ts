@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ImportLeagueService } from './import-league.service';
-import { ExternalApiService } from './external-api.service';
+import {
+  PlayerService,
+  ImportLeagueService,
+  ExternalApiService,
+  TeamService,
+} from './services';
 import {
   CoachSchema,
   CompetitionSchema,
@@ -22,6 +25,11 @@ import {
     ]),
   ],
   controllers: [AppController],
-  providers: [AppService, ExternalApiService, ImportLeagueService],
+  providers: [
+    PlayerService,
+    ExternalApiService,
+    ImportLeagueService,
+    TeamService,
+  ],
 })
 export class AppModule { }
