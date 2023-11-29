@@ -2,7 +2,7 @@ export class PlayersResponseInterface {
   id: number;
   name: string;
   position: string;
-  dateOfBirth: Date;
+  dateOfBirth: string;
   nationality: string;
   team: string;
 }
