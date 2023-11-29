@@ -75,7 +75,7 @@ La API ofrece las siguientes rutas y funcionalidades:
       "leagueCode": "CL"
     }'
   ```
-&nbsp;
+
 - `GET /players/:leagueCode`: Obtiene todo el listado de juegadores que pertenecen a la liga especificada en el parámetro `:leagueCode`.
 
     - `:leagueCode`: "WC" |  "CL" | "BL1" | "DED" | "BSA" | "PD" | "FL1" | "ELC" | "PPL" | "EC" | "SA" | "PL" | "CLI"
@@ -83,7 +83,7 @@ La API ofrece las siguientes rutas y funcionalidades:
   ```cURL
   curl --location 'http://localhost:3000/players/CL'
   ```
-&nbsp;
+
 - `GET /team/:teamName`: Obtiene el detalle de equipo especificado en el parámetro `:teamName`y tambien puede devolver el listado de de jugadores si la queryParams `?includePlayers` se le asigna el valor true.
 
     - `:teamName`: string
@@ -92,7 +92,6 @@ La API ofrece las siguientes rutas y funcionalidades:
   ```cURL
   curl --location 'http://localhost:3000/team/Barcelona?includePlayers=true'
   ```
-&nbsp;
 
 ### Postman Colletion
 
