@@ -1,4 +1,4 @@
-export interface PlayersResponseInterface {
+export class PlayersResponseInterface {
   id: number;
   name: string;
   position: string;

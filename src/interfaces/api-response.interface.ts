@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 
-export interface ApiResponseInterface {
+export class ApiResponseInterface {
   status: HttpStatus;
   error?: string;
   message: string;

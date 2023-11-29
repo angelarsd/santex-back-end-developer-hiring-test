@@ -1,4 +1,4 @@
-export interface TeamResponseInterface {
+export class TeamResponseInterface {
   name: string;
   tla: string;
   shortName: string;
