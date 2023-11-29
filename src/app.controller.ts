@@ -9,6 +9,7 @@ import {
   TeamResponseInterface,
 } from './interfaces';
 import { TeamService } from './services/team.service';
+import { FetchPlayersDoc, ImportLeagueDoc, FetchTeamDoc } from './swagger';
 
 @Controller()
 export class AppController {
@@ -19,6 +20,7 @@ export class AppController {
   ) { }
 
   @Post('importLeague')
+  @ImportLeagueDoc()
   async importLeague(
     @Body('leagueCode', ValidateLeagueCodePipe) leagueCode: LeagueCodeType,
   ): Promise<ApiResponseInterface> {
@@ -26,6 +28,7 @@ export class AppController {
   }
 
   @Get('players/:leagueCode')
+  @FetchPlayersDoc()
   async fetchPlayers(
     @Param('leagueCode', ValidateLeagueCodePipe) leagueCode: LeagueCodeType,
     @Query() queries: { name?: string },
@@ -34,6 +37,7 @@ export class AppController {
   }
 
   @Get('team/:teamName')
+  @FetchTeamDoc()
   async fetchTeam(
     @Param('teamName') teamName: string,
     @Query()
