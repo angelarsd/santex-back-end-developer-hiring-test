@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import {
@@ -13,6 +13,7 @@ import {
   PlayerSchema,
   TeamSchema,
 } from './schemas';
+import { AppRateLimitMiddleware } from './app.middleware';
 
 @Module({
   imports: [
@@ -32,4 +33,8 @@ import {
     TeamService,
   ],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AppRateLimitMiddleware).forRoutes('importLeague');
+  }
+}

@@ -28,6 +28,7 @@
     "@nestjs/swagger": "^7.1.16",
     "axios": "^1.6.2",
     "mongoose": "^8.0.1",
+    "rate-limiter-flexible": "^3.0.4",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
     "swagger-ui-express": "^5.0.0"
