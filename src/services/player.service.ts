@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { LeagueCodeType } from '../types';
 import { PlayerDocumentInterface } from '../schemas';
-import { ApiResponseInterface, PlayersResponseInterface } from 'src/interfaces';
+import { ApiResponseInterface, PlayersResponseInterface } from '../interfaces';
 
 @Injectable()
 export class PlayerService {

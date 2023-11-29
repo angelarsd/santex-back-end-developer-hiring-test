@@ -11,7 +11,7 @@ import {
   CoachResponseInterface,
   PlayerResponseInterface,
   TeamResponseInterface,
-} from 'src/interfaces';
+} from '../interfaces';
 
 @Injectable()
 export class TeamService {

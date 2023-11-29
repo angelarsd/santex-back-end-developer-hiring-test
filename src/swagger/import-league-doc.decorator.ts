@@ -6,7 +6,7 @@ import {
   ApiConflictResponse,
   ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
-import { ApiResponseInterface } from 'src/interfaces';
+import { ApiResponseInterface } from '../interfaces';
 
 class PayloadInterface {
   leagueCode: string;

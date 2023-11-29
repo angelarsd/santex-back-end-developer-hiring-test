@@ -1,22 +1,53 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
-import { AppService } from './services/player.service';
+import { getModelToken } from '@nestjs/mongoose';
+import {
+  ExternalApiService,
+  ImportLeagueService,
+  PlayerService,
+  TeamService,
+} from './services';
 
 describe('AppController', () => {
-  let appController: AppController;
+  let controller: AppController;
+  let importLeagueService: ImportLeagueService;
 
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
-      providers: [AppService],
+      providers: [
+        ImportLeagueService,
+        ExternalApiService,
+        PlayerService,
+        TeamService,
+        { provide: getModelToken('Competition'), useValue: {} },
+        { provide: getModelToken('Team'), useValue: {} },
+        { provide: getModelToken('Player'), useValue: {} },
+        { provide: getModelToken('Coach'), useValue: {} },
+      ],
     }).compile();
 
-    appController = app.get<AppController>(AppController);
+    controller = module.get<AppController>(AppController);
+    importLeagueService = module.get<ImportLeagueService>(ImportLeagueService);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+  describe('createCompetition', () => {
+    it('should create a new competition', async () => {
+      const competitionData = {
+        status: 201,
+        message: 'Resource created successfully',
+        data: {
+          name: 'UEFA Champions League',
+          code: 'CL',
+          areaName: 'Europe',
+        },
+      };
+
+      jest
+        .spyOn(importLeagueService, 'fetchAndSaveData')
+        .mockImplementation(async () => competitionData);
+
+      expect(await controller.importLeague('CL')).toBe(competitionData);
     });
   });
 });

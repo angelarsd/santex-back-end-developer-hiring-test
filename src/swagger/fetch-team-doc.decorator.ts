@@ -7,7 +7,7 @@ import {
   ApiParam,
   ApiOkResponse,
 } from '@nestjs/swagger';
-import { ApiResponseInterface, PlayersResponseInterface } from 'src/interfaces';
+import { ApiResponseInterface, PlayersResponseInterface } from '../interfaces';
 
 export const FetchTeamDoc = () =>
   applyDecorators(

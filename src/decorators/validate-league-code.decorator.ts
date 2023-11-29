@@ -1,5 +1,5 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
-import { LeagueCodeType, TLeagueCodeType } from 'src/types';
+import { LeagueCodeType, TLeagueCodeType } from '../types';
 
 @Injectable()
 export class ValidateLeagueCodePipe implements PipeTransform<string, string> {

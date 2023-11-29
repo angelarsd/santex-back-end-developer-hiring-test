@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { LeagueCodeType } from 'src/types';
+import { LeagueCodeType } from '../types';
 
 export const TeamSchema = new mongoose.Schema({
   id: { type: Number, required: true },
