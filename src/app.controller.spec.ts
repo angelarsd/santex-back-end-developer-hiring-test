@@ -52,13 +52,17 @@ describe('AppController', () => {
         .spyOn(importLeagueService, 'fetchAndSaveData')
         .mockImplementation(async () => competitionData);
 
-      expect(await controller.importLeague('CL')).toBe(competitionData);
+      const importLeague = await controller.importLeague('CL');
+
+      expect(importLeague).toBe(competitionData);
+      expect(importLeagueService.fetchAndSaveData).toHaveBeenCalled();
+      expect(importLeagueService.fetchAndSaveData).toHaveBeenCalledWith('CL');
     });
   });
 
   describe('fetchPlayers', () => {
     it('should fetch players by competition', async () => {
-      const playersData: PlayersResponseInterface[] = [
+      const playersDataMock: PlayersResponseInterface[] = [
         {
           id: 3218,
           name: 'Lionel Messi',
@@ -71,17 +75,23 @@ describe('AppController', () => {
 
       jest
         .spyOn(playerService, 'getPlayersByCompetition')
-        .mockImplementation(async () => playersData);
+        .mockImplementation(async () => playersDataMock);
 
-      expect(await controller.fetchPlayers('WC', { name: 'messi' })).toBe(
-        playersData,
-      );
+      const fetchPlayers = await controller.fetchPlayers('WC', {
+        name: 'messi',
+      });
+
+      expect(fetchPlayers).toBe(playersDataMock);
+      expect(playerService.getPlayersByCompetition).toHaveBeenCalled();
+      expect(playerService.getPlayersByCompetition).toHaveBeenCalledWith('WC', {
+        name: 'messi',
+      });
     });
   });
 
-  describe('fetchTeam by name', () => {
-    it('should fetch team', async () => {
-      const teamData = {
+  describe('fetchTeam', () => {
+    it('should fetch team by name', async () => {
+      const teamDataMock = {
         id: 81,
         name: 'FC Barcelona',
         tla: 'FCB',
@@ -93,11 +103,18 @@ describe('AppController', () => {
 
       jest
         .spyOn(teamService, 'findTeamByName')
-        .mockImplementation(async () => teamData);
+        .mockImplementation(async () => teamDataMock);
 
-      expect(
-        await controller.fetchTeam('Barcelona', { includePlayers: 'false' }),
-      ).toBe(teamData);
+      const includePlayers = await controller.fetchTeam('Barcelona', {
+        includePlayers: 'false',
+      });
+
+      expect(includePlayers).toBe(teamDataMock);
+      expect(teamService.findTeamByName).toHaveBeenCalled();
+      expect(teamService.findTeamByName).toHaveBeenCalledWith(
+        'Barcelona',
+        false,
+      );
     });
   });
 });
